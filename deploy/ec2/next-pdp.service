@@ -1,0 +1,17 @@
+[Unit]
+Description=Next.js SSR app (next-pdp)
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/var/www/next-pdp
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=-/var/www/next-pdp/.env.production
+ExecStart=/usr/bin/npm run start:prod
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,41 @@
+# CodeBuild: static export → S3 + CloudFront invalidation
+# CodePipeline: Source → Build (this file)
+version: 0.2
+
+env:
+  variables:
+    DEPLOY_TARGET: static
+    ENV_BUCKET: pdp-env-config-162133619884
+    HOSTING_BUCKET: pdp-frontend-hosting-162133619884
+    CLOUDFRONT_DISTRIBUTION_ID: E1MQXJQON7ZA6F
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - npm ci
+
+  pre_build:
+    commands:
+      - echo "Pulling production env from S3..."
+      - aws s3 cp "s3://$ENV_BUCKET/env/.env.production" .env.production
+      - set -a && source .env.production && set +a
+
+  build:
+    commands:
+      - npm run build:static
+      - test -d out
+      - ls -la out/
+
+  post_build:
+    commands:
+      - echo "Deploying static assets to S3..."
+      - aws s3 sync out/ "s3://$HOSTING_BUCKET/" --delete
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: out

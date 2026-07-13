@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "node deploy/scripts/build-static.mjs",
+    "build:ssr": "DEPLOY_TARGET=ssr next build",
     "start": "next start",
+    "start:prod": "next start -p ${PORT:-3000}",
     "lint": "eslint"
   },
   "dependencies": {

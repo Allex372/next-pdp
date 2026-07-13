@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+const deployTarget = process.env.DEPLOY_TARGET ?? "ssr";
+
 const publicEnvVars = [
   { key: "NEXT_PUBLIC_APP_NAME", value: process.env.NEXT_PUBLIC_APP_NAME },
   { key: "NEXT_PUBLIC_API_URL", value: process.env.NEXT_PUBLIC_API_URL },
@@ -88,6 +90,15 @@ export default function Home() {
             <code className="rounded bg-zinc-200 px-1.5 py-0.5 text-sm dark:bg-zinc-800">
               .env.local
             </code>
+          </p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-500">
+            Режим деплою:{" "}
+            <code className="rounded bg-zinc-200 px-1.5 py-0.5 font-mono dark:bg-zinc-800">
+              {deployTarget}
+            </code>
+            {deployTarget === "static"
+              ? " — серверні змінні запікаються під час build"
+              : " — серверні змінні читаються на EC2 під час запиту"}
           </p>
         </div>
 
