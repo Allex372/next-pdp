@@ -12,21 +12,24 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - npm ci
 
   pre_build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - echo "Pulling production env from S3..."
-      - aws s3 cp "s3://$ENV_BUCKET/env/.env.production" .env.production
-      - set -a && source .env.production && set +a
+      - aws s3 cp "s3://$ENV_BUCKET/env/.env.production" "$CODEBUILD_SRC_DIR/.env.production"
+      - set -a && . "$CODEBUILD_SRC_DIR/.env.production" && set +a
 
   build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - npm run build:ssr
       - test -d .next
       - mkdir -p artifact
       - cp -r .next public package.json package-lock.json next.config.ts artifact/
-      - cp .env.production artifact/.env.production
+      - cp "$CODEBUILD_SRC_DIR/.env.production" artifact/.env.production
       - cp deploy/ssr/appspec.yml artifact/appspec.yml
       - cp -r deploy/ssr/scripts artifact/scripts
       - chmod +x artifact/scripts/*.sh
