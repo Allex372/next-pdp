@@ -5,7 +5,8 @@ version: 0.2
 env:
   variables:
     DEPLOY_TARGET: ssr
-    ENV_BUCKET: REPLACE_ME
+    ENV_BUCKET: pdp-env-config-162133619884
+    ENV_FILE: env/.env.ssr.production
 
 phases:
   install:
@@ -19,7 +20,7 @@ phases:
     commands:
       - cd "$CODEBUILD_SRC_DIR"
       - echo "Pulling production env from S3..."
-      - aws s3 cp "s3://$ENV_BUCKET/env/.env.production" "$CODEBUILD_SRC_DIR/.env.production"
+      - aws s3 cp "s3://$ENV_BUCKET/$ENV_FILE" "$CODEBUILD_SRC_DIR/.env.production"
       - set -a && . "$CODEBUILD_SRC_DIR/.env.production" && set +a
 
   build:
