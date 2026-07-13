@@ -14,22 +14,26 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - npm ci
 
   pre_build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - echo "Pulling production env from S3..."
-      - aws s3 cp "s3://$ENV_BUCKET/env/.env.production" .env.production
-      - set -a && source .env.production && set +a
+      - aws s3 cp "s3://$ENV_BUCKET/env/.env.production" "$CODEBUILD_SRC_DIR/.env.production"
+      - set -a && . "$CODEBUILD_SRC_DIR/.env.production" && set +a
 
   build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - npm run build:static
       - test -d out
       - ls -la out/
 
   post_build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - echo "Deploying static assets to S3..."
       - aws s3 sync out/ "s3://$HOSTING_BUCKET/" --delete
       - echo "Invalidating CloudFront cache..."
