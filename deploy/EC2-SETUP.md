@@ -3,7 +3,7 @@
 Регіон: **eu-north-1** | Account: **162133619884**
 
 ```
-Git push → CodePipeline → CodeBuild (SSR build) → CodeDeploy → EC2 (next start)
+Git push → CodePipeline → CodeBuild (SSR build + prod node_modules) → CodeDeploy → EC2 (start:custom)
                               ↑
                     env з S3 (окремий файл для SSR)
 ```
@@ -175,7 +175,7 @@ curl http://<EC2_PUBLIC_IP>:3000/
 |---------|---------|
 | CodeDeploy `UnknownError` | codedeploy-agent не запущений — перевір user-data |
 | `ScriptMissing` | `chmod +x` на scripts — buildspec це робить |
-| `npm ci` failed на EC2 | Перевір package-lock.json в artifact |
+| `AfterInstall` `ScriptTimedOut` | `npm ci` на EC2 прибрано — перевір, що artifact містить `node_modules` |
 | Connection refused :3000 | Security group, або `systemctl status next-pdp` |
 | Build: env 404 | Завантаж `env/.env.ssr.production` в S3 |
 

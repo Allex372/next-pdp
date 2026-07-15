@@ -5,7 +5,7 @@
 | Режим | Коли використовувати | Куди деплоїться | Що з env |
 |-------|---------------------|-----------------|----------|
 | `static` | Статичний сайт, без сервера | S3 + CloudFront | `NEXT_PUBLIC_*` і серверні змінні **запікаються під час build** |
-| `ssr` | Повноцінний Next.js з API routes | EC2 (`next start`) | Серверні змінні читаються **на сервері під час запиту** |
+| `ssr` | Повноцінний Next.js з API routes | EC2 (`start:custom`) | Серверні змінні читаються **на сервері під час запиту** |
 
 Обидва пайплайни тягнуть `.env.production` з **окремого S3-бакета** під час CodeBuild.
 
@@ -30,12 +30,13 @@ Git push → CodePipeline (Source)
 ```
 Git push → CodePipeline (Source)
          → CodeBuild (deploy/ssr/buildspec.yml)
-              ├─ S3: env/.env.production
+              ├─ S3: env/.env.ssr.production
               ├─ npm run build:ssr → .next/
-              └─ artifact (appspec + scripts)
+              ├─ npm ci --omit=dev → production node_modules
+              └─ artifact (.next + node_modules + server + appspec)
          → CodeDeploy → EC2
-              ├─ npm ci --omit=dev
-              └─ systemctl restart next-pdp
+              ├─ AfterInstall: verify node_modules (без npm ci)
+              └─ systemctl restart next-pdp  (start:custom)
          → користувач → (опційно ALB) → EC2:3000
 ```
 
@@ -279,8 +280,10 @@ npm run dev:custom
 ```
 
 На EC2 systemd-юніт запускає `npm run start:custom` (див. `deploy/ec2/next-pdp.service`
-та `deploy/ec2/user-data.sh`). SSR buildspec копіює теку `server/` в артефакт, а
-`express` лежить у `dependencies`, тому `npm ci --omit=dev` встановлює його на інстансі.
+та `deploy/ec2/user-data.sh`). SSR buildspec кладе в артефакт `server/` **і**
+production `node_modules` (після `npm ci --omit=dev` у CodeBuild). На EC2
+`AfterInstall` лише перевіряє наявність залежностей — `npm ci` там більше не
+запускається (на `t3.small` він часто зависає і дає `ScriptTimedOut`).
 
 ---
 
@@ -319,6 +322,7 @@ src/app/api/health/route.ts   # Тільки для SSR (health check ALB)
 | Static build падає на `/api/health` | Використовуйте `npm run build:static`, не `next build` напряму |
 | 403 на CloudFront | Перевірте OAC і bucket policy |
 | CodeDeploy `ScriptMissing` | `chmod +x` на scripts — buildspec це робить |
+| `AfterInstall` `ScriptTimedOut` | Не ставте `npm ci` на EC2 — `node_modules` мають їхати з CodeBuild |
 | `next-pdp` не стартує на EC2 | `journalctl -u next-pdp -f`, перевірте `.env.production` |
 | Старий контент на CDN | CloudFront invalidation після deploy |
 
@@ -331,5 +335,5 @@ src/app/api/health/route.ts   # Тільки для SSR (health check ALB)
 - [ ] Git push тригерить pipeline
 - [ ] CodeBuild тягне env з S3
 - [ ] **Static:** артефакти в hosting S3, CloudFront + invalidation
-- [ ] **SSR:** EC2 з CodeDeploy, `next start`, health endpoint
+- [ ] **SSR:** EC2 з CodeDeploy, Express custom server (`start:custom`), health + express endpoints
 - [ ] Розумієте різницю між `static` і `ssr` для env-змінних

@@ -28,8 +28,14 @@ phases:
       - cd "$CODEBUILD_SRC_DIR"
       - npm run build:ssr
       - test -d .next
+      # Install production deps in CodeBuild (faster/reliable network) so EC2
+      # AfterInstall does not run npm ci — that often times out on small instances.
+      - rm -rf node_modules
+      - npm ci --omit=dev
+      - test -d node_modules/next
+      - test -d node_modules/express
       - mkdir -p artifact
-      - cp -r .next public server package.json package-lock.json next.config.ts artifact/
+      - cp -r .next public server node_modules package.json package-lock.json next.config.ts artifact/
       - cp "$CODEBUILD_SRC_DIR/.env.production" artifact/.env.production
       - cp deploy/ssr/appspec.yml artifact/appspec.yml
       - cp -r deploy/ssr/scripts artifact/scripts
