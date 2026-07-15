@@ -249,6 +249,41 @@ sudo systemctl status next-pdp   # буде inactive до першого деп�
 
 ---
 
+## Custom server (Express + Next.js)
+
+SSR-режим запускається через **custom Express server** (`server/custom-server.mjs`),
+а не через `next start`. Express слухає порт, а Next.js обробляє всі запити, крім
+власних Express-роутів.
+
+| URL | Хто обробляє |
+|-----|--------------|
+| `/express-api/status` | Express handler |
+| `/api/health` | Next.js Route Handler |
+| `/` та решта | Next.js (через Express) |
+
+**Важливо:** custom server працює **тільки в SSR (EC2)**. Static (S3 + CloudFront)
+не має Node.js runtime, тому там використовується `output: "export"`, а Express
+неможливий. Також custom server несумісний з `output: "standalone"`.
+
+Локальна перевірка:
+
+```bash
+npm run build:ssr
+npm run start:custom
+# http://localhost:3000/express-api/status  → {"handledBy":"Express",...}
+# http://localhost:3000/api/health          → Next.js Route Handler
+# http://localhost:3000/                     → сторінка через Express
+
+# dev-режим з hot reload через custom server:
+npm run dev:custom
+```
+
+На EC2 systemd-юніт запускає `npm run start:custom` (див. `deploy/ec2/next-pdp.service`
+та `deploy/ec2/user-data.sh`). SSR buildspec копіює теку `server/` в артефакт, а
+`express` лежить у `dependencies`, тому `npm ci --omit=dev` встановлює його на інстансі.
+
+---
+
 ## Amplify (альтернатива)
 
 AWS Amplify Hosting зібрав би Source + Build + Deploy «з коробки», але:
@@ -271,6 +306,7 @@ deploy/
 ├── scripts/build-static.mjs  # Static build без API routes
 └── env/.env.production.example
 
+server/custom-server.mjs      # Express + Next.js (тільки SSR/EC2)
 src/app/api/health/route.ts   # Тільки для SSR (health check ALB)
 ```
 

@@ -9,7 +9,7 @@ WorkingDirectory=/var/www/next-pdp
 Environment=NODE_ENV=production
 Environment=PORT=3000
 EnvironmentFile=-/var/www/next-pdp/.env.production
-ExecStart=/usr/bin/npm run start:prod
+ExecStart=/usr/bin/npm run start:custom
 Restart=always
 RestartSec=5
 

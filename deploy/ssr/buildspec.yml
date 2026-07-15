@@ -29,7 +29,7 @@ phases:
       - npm run build:ssr
       - test -d .next
       - mkdir -p artifact
-      - cp -r .next public package.json package-lock.json next.config.ts artifact/
+      - cp -r .next public server package.json package-lock.json next.config.ts artifact/
       - cp "$CODEBUILD_SRC_DIR/.env.production" artifact/.env.production
       - cp deploy/ssr/appspec.yml artifact/appspec.yml
       - cp -r deploy/ssr/scripts artifact/scripts

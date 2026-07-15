@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ExpressPostsDemo } from "@/components/ExpressPostsDemo";
 
 const deployTarget = process.env.DEPLOY_TARGET ?? "ssr";
 
@@ -113,6 +114,109 @@ export default function Home() {
           description="Доступні тільки в Server Components та API routes. Не потрапляють у клієнтський бандл."
           vars={serverEnvVars}
         />
+
+        <section className="w-full rounded-xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            Custom server (Express + Next.js)
+          </h2>
+          <p className="mt-1 mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+            Express запускає HTTP-сервер, а Next.js обробляє решту запитів.
+            Працює тільки в SSR-режимі (EC2). Статичний CloudFront/S3 не має
+            Node.js runtime, тому custom server там неможливий.
+          </p>
+          <div className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-zinc-100 dark:bg-zinc-800">
+                <tr>
+                  <th className="px-4 py-2 font-medium text-zinc-700 dark:text-zinc-300">
+                    Endpoint
+                  </th>
+                  <th className="px-4 py-2 font-medium text-zinc-700 dark:text-zinc-300">
+                    Хто обробляє
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t border-zinc-200 dark:border-zinc-700">
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-900 dark:text-zinc-100">
+                    <a
+                      href="/express-api/status"
+                      className="underline underline-offset-2 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      /express-api/status
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    Express handler
+                  </td>
+                </tr>
+                <tr className="border-t border-zinc-200 dark:border-zinc-700">
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-900 dark:text-zinc-100">
+                    <a
+                      href="/express-api/posts"
+                      className="underline underline-offset-2 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      /express-api/posts
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    Express handler (JSON data)
+                  </td>
+                </tr>
+                <tr className="border-t border-zinc-200 dark:border-zinc-700">
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-900 dark:text-zinc-100">
+                    <a
+                      href="/api/health"
+                      className="underline underline-offset-2 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      /api/health
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    Next.js Route Handler
+                  </td>
+                </tr>
+                <tr className="border-t border-zinc-200 dark:border-zinc-700">
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-900 dark:text-zinc-100">
+                    /
+                  </td>
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    Next.js page (через Express)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-700">
+            <h3 className="mb-2 text-sm font-medium text-zinc-900 dark:text-zinc-50">
+              Дані з Express API на сторінці Next.js
+            </h3>
+            <p className="mb-4 text-xs text-zinc-500">
+              Браузер робить{" "}
+              <code className="rounded bg-zinc-200 px-1 py-0.5 font-mono dark:bg-zinc-800">
+                fetch(&quot;/express-api/posts&quot;)
+              </code>{" "}
+              на той самий порт :3000. Express відповідає JSON, React
+              відображає список.
+            </p>
+            <ExpressPostsDemo />
+          </div>
+          <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
+            Локально:{" "}
+            <code className="rounded bg-zinc-200 px-1.5 py-0.5 font-mono dark:bg-zinc-800">
+              npm run build:ssr
+            </code>{" "}
+            →{" "}
+            <code className="rounded bg-zinc-200 px-1.5 py-0.5 font-mono dark:bg-zinc-800">
+              npm run start:custom
+            </code>
+            . Для dev:{" "}
+            <code className="rounded bg-zinc-200 px-1.5 py-0.5 font-mono dark:bg-zinc-800">
+              npm run dev:custom
+            </code>
+            .
+          </p>
+        </section>
       </main>
     </div>
   );
