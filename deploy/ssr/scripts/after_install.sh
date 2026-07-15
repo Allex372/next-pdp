@@ -12,4 +12,6 @@ test -d node_modules/express
 test -f server/custom-server.mjs
 test -d .next
 
+chmod +x scripts/*.sh
+
 echo "AfterInstall: OK (node_modules shipped with artifact)"
