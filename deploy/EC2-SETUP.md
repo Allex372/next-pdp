@@ -173,11 +173,41 @@ curl http://<EC2_PUBLIC_IP>:3000/
 
 | Помилка | Рішення |
 |---------|---------|
-| CodeDeploy `UnknownError` | codedeploy-agent не запущений — перевір user-data |
+| CodeDeploy `UnknownError` / agent not receiving events | Агент завис після failed deploy — див. **Відновлення агента** нижче |
 | `ScriptMissing` | `chmod +x` на scripts — buildspec це робить |
 | `AfterInstall` `ScriptTimedOut` | `npm ci` на EC2 прибрано — перевір, що artifact містить `node_modules` |
 | Connection refused :3000 | Security group, або `systemctl status next-pdp` |
 | Build: env 404 | Завантаж `env/.env.ssr.production` в S3 |
+
+---
+
+## Відновлення CodeDeploy agent (після ScriptTimedOut / UnknownError)
+
+Після довгого timeout агент часто перестає приймати lifecycle events.
+Підключись через **SSM Session Manager** і виконай:
+
+```bash
+sudo systemctl status codedeploy-agent
+sudo journalctl -u codedeploy-agent -n 50 --no-pager
+
+# Жорсткий рестарт агента
+sudo systemctl restart codedeploy-agent
+sudo systemctl status codedeploy-agent   # має бути active (running)
+
+# Якщо все ще погано — почисти stale deployment lock і рестартни ще раз
+sudo rm -f /opt/codedeploy-agent/deployment-root/deployment-instructions/*
+sudo systemctl restart codedeploy-agent
+```
+
+Потім у CodePipeline натисни **Release change** (або Redeploy у CodeDeploy).
+
+Перевірка після успішного deploy:
+
+```bash
+sudo systemctl status next-pdp
+curl -s http://127.0.0.1:3000/express-api/status
+curl -s http://127.0.0.1:3000/api/health
+```
 
 ---
 
