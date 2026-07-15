@@ -38,6 +38,7 @@ phases:
       - cp -r .next public server node_modules package.json package-lock.json next.config.ts artifact/
       - cp "$CODEBUILD_SRC_DIR/.env.production" artifact/.env.production
       - cp deploy/ssr/appspec.yml artifact/appspec.yml
+      - cp deploy/ec2/next-pdp.service artifact/next-pdp.service
       - cp -r deploy/ssr/scripts artifact/scripts
       - chmod +x artifact/scripts/*.sh
 
