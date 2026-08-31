@@ -1,0 +1,45 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="UI/Introduction" />
+
+# Storybook — next-pdp
+
+Мінімальна UI library для PDP. Storybook дозволяє розробляти компоненти **окремо від Next.js pages**.
+
+## Запуск
+
+```bash
+npm run storybook        # dev UI на http://localhost:6006
+npm run build-storybook  # static build → storybook-static/
+```
+
+## Що покрито
+
+| Тема | Де подивитись |
+|------|----------------|
+| **CSF stories** | `ui/Button`, `ui/Input`, `ui/Select`, `ui/Link` |
+| **Controls / argTypes** | будь-який UI-компонент → Controls |
+| **Actions** | Button `onClick`, Input/Select `onChange` |
+| **Play functions** | Button → `WithPlayFunction` |
+| **Autodocs** | вкладка Docs |
+| **a11y addon** | вкладка Accessibility |
+| **Viewport / backgrounds** | toolbar у preview |
+
+## Структура
+
+```
+src/components/
+  ui/          — Storybook UI library (Button, Input, Select, Link)
+  demo/        — helpers для PDP demo pages (без stories)
+  widgets/     — app widgets (HeavyWidget тощо)
+
+.storybook/main.ts
+.storybook/preview.tsx
+```
+
+## Deploy (опційно)
+
+```bash
+npm run build-storybook
+# завантаж storybook-static/ на S3 / GitHub Pages / Chromatic
+```

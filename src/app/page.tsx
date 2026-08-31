@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { ExpressPostsDemo } from "@/components/ExpressPostsDemo";
+import Link from "next/link";
+import { ExpressPostsDemo } from "@/components/demo/ExpressPostsDemo";
 
 const deployTarget = process.env.DEPLOY_TARGET ?? "ssr";
 
@@ -78,7 +79,7 @@ export default function Home() {
             alt="Next.js logo"
             width={100}
             height={20}
-            priority
+            preload
           />
         </div>
 
@@ -166,6 +167,19 @@ export default function Home() {
                 <tr className="border-t border-zinc-200 dark:border-zinc-700">
                   <td className="px-4 py-2 font-mono text-xs text-zinc-900 dark:text-zinc-100">
                     <a
+                      href="/api/posts"
+                      className="underline underline-offset-2 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      /api/posts
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    Next.js Route Handler (JSONPlaceholder)
+                  </td>
+                </tr>
+                <tr className="border-t border-zinc-200 dark:border-zinc-700">
+                  <td className="px-4 py-2 font-mono text-xs text-zinc-900 dark:text-zinc-100">
+                    <a
                       href="/api/health"
                       className="underline underline-offset-2 hover:text-blue-600 dark:hover:text-blue-400"
                     >
@@ -216,6 +230,22 @@ export default function Home() {
             </code>
             .
           </p>
+        </section>
+
+        <section className="w-full rounded-xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            PDP demos
+          </h2>
+          <p className="mt-1 mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+            Мінімальні демо для Next.js Advanced PDP — performance, ISR, API, i18n,
+            errors та інше.
+          </p>
+          <Link
+            href="/demos"
+            className="inline-block rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            Відкрити всі демо →
+          </Link>
         </section>
       </main>
     </div>
