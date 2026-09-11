@@ -17,11 +17,12 @@ npm run build-storybook  # static build → storybook-static/
 
 | Тема | Де подивитись |
 |------|----------------|
-| **CSF stories** | `ui/Button`, `ui/Input`, `ui/Select`, `ui/Link` |
-| **Controls / argTypes** | будь-який UI-компонент → Controls |
+| **CSF stories** | `UI/Button`, `UI/Input`, `UI/Select`, `UI/Link`, `UI/Form/ContactForm` |
+| **Controls / argTypes** | кожен компонент → Controls panel |
 | **Actions** | Button `onClick`, Input/Select `onChange` |
-| **Play functions** | Button → `WithPlayFunction` |
-| **Autodocs** | вкладка Docs |
+| **Play functions** | Button, Input, Select, Link, ContactForm |
+| **Complex story** | `ContactForm` — Input + Select + Button + Link |
+| **Autodocs** | вкладка Docs + опис component у parameters |
 | **a11y addon** | вкладка Accessibility |
 | **Viewport / backgrounds** | toolbar у preview |
 
@@ -29,7 +30,7 @@ npm run build-storybook  # static build → storybook-static/
 
 ```
 src/components/
-  ui/          — Storybook UI library (Button, Input, Select, Link)
+  ui/          — Storybook UI library (Button, Input, Select, Link, Form)
   demo/        — helpers для PDP demo pages (без stories)
   widgets/     — app widgets (HeavyWidget тощо)
 

@@ -1,12 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { fn } from "storybook/test";
+import { expect, fn, userEvent, within } from "storybook/test";
 import { Input } from "./Input";
 
 const meta = {
   title: "UI/Input",
   component: Input,
   tags: ["autodocs"],
-  parameters: { layout: "centered" },
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Text input with optional label and error state. onChange is logged in the Actions panel.",
+      },
+    },
+  },
   argTypes: {
     type: {
       control: "select",
@@ -16,6 +24,7 @@ const meta = {
     label: { control: "text" },
     placeholder: { control: "text" },
     error: { control: "text" },
+    onChange: { action: "changed", description: "Fired when value changes" },
   },
   args: {
     label: "Email",
@@ -51,5 +60,14 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     value: "cannot edit",
+  },
+};
+
+export const TypeEmail: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByLabelText("Email");
+    await userEvent.type(input, "demo@test.com");
+    await expect(args.onChange).toHaveBeenCalled();
   },
 };

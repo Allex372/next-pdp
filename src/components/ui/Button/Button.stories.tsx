@@ -6,19 +6,29 @@ const meta = {
   title: "UI/Button",
   component: Button,
   tags: ["autodocs"],
-  parameters: { layout: "centered" },
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Primary action button with variants (primary, secondary, danger) and sizes. Use Controls to tweak props; Actions panel logs clicks.",
+      },
+    },
+  },
   argTypes: {
     variant: {
       control: "select",
       options: ["primary", "secondary", "danger"],
+      description: "Visual style",
     },
     size: {
       control: "radio",
       options: ["sm", "md", "lg"],
+      description: "Button size",
     },
     disabled: { control: "boolean" },
     label: { control: "text" },
-    onClick: { action: "clicked" },
+    onClick: { action: "clicked", description: "Fired on button click" },
   },
   args: {
     label: "Click me",

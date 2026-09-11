@@ -9,6 +9,10 @@ const demos = [
   { href: "/demos/i18n", title: "i18n", note: "locale routing + переклади" },
   { href: "/demos/configuration", title: "Configuration", note: "env, webpack alias" },
   { href: "/demos/errors", title: "Error handling", note: "404, 500, error boundary" },
+  { href: "/demos/strategy-pattern", title: "Strategy pattern", note: "RouteStrategy, NavigationApp" },
+  { href: "/demos/chain-of-responsibility", title: "Chain of Responsibility", note: "Tier1 → Tier2 → Tier3" },
+  { href: "/demos/facade-pattern", title: "Facade pattern", note: "HomeAutomationFacade" },
+  { href: "/demos/decorator-pattern", title: "Decorator pattern", note: "Pizza + toppings" },
   { href: "/image-optimization", title: "Image optimization", note: "next/image (окремо)" },
 ];
 
