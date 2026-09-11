@@ -27,7 +27,7 @@ export function ChainOfResponsibilityDemo() {
     setResult(system.reportIncident(incident));
   }
 
-  console.log('amy');
+  // console.log('amy');
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2">
