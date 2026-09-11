@@ -37,7 +37,7 @@ phases:
       - echo "Deploying static assets to S3..."
       - aws s3 sync out/ "s3://$HOSTING_BUCKET/" --delete
       - echo "Invalidating CloudFront cache..."
-      - aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
+      # - aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
 
 artifacts:
   files:
